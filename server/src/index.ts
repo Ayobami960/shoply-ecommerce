@@ -2,8 +2,8 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 
-// import fs from "node:fs";
-// import path from "node:path";
+import fs from "node:fs";
+import path from "node:path";
 
 // import * as Sentry from "@sentry/node";
 
@@ -51,24 +51,24 @@ app.get("/health", (_req, res) => {
 // app.use("/api/admin", adminRouter);
 // app.use("/api/orders", orderRouter);
 
-// const publicDir = path.join(process.cwd(), "public");
-// if (fs.existsSync(publicDir)) {
-//   app.use(express.static(publicDir));
+const publicDir = path.join(process.cwd(), "public");
+if (fs.existsSync(publicDir)) {
+  app.use(express.static(publicDir));
 
-//   app.get("/{*any}", (req, res, next) => {
-//     if (req.method !== "GET" && req.method !== "HEAD") {
-//       next();
-//       return;
-//     }
+  app.get("/{*any}", (req, res, next) => {
+    if (req.method !== "GET" && req.method !== "HEAD") {
+      next();
+      return;
+    }
 
-//     if (req.path.startsWith("/api") || req.path.startsWith("/webhooks")) {
-//       next();
-//       return;
-//     }
+    if (req.path.startsWith("/api") || req.path.startsWith("/webhooks")) {
+      next();
+      return;
+    }
 
-//     res.sendFile(path.join(publicDir, "index.html"), (err) => next(err));
-//   });
-// }
+    res.sendFile(path.join(publicDir, "index.html"), (err) => next(err));
+  });
+}
 
 // sentry will be attached to the response object
 // Sentry.setupExpressErrorHandler(app);
