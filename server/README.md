@@ -16,3 +16,14 @@ npm i --save-dev @types/express@5.0.6 @types/node@22.10.10 @types/pg@8.11.10 dri
 
 
 https://app.eraser.io/workspace/s8XKlUujS1ZhbirZlkfr
+https://sandbox.polar.sh/dashboard/build-solution/products
+
+https://imagekit.io/dashboard/developer/api-keys
+
+https://orm.drizzle.team/docs/overview
+
+https://dashboard.getstream.io/app/1596775/chat/overview
+
+https://software-developer-gj.sentry.io/insights/projects/shoply/getting-started/
+
+https://app.eraser.io/workspace/s8XKlUujS1ZhbirZlkfr
