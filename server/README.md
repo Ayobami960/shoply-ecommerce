@@ -11,3 +11,8 @@ npm i express@5.2.1 dotenv@16.4.7 cors@2.8.5 @clerk/express@2.1.0 @clerk/backend
 
 
 npm i --save-dev @types/express@5.0.6 @types/node@22.10.10 @types/pg@8.11.10 drizzle-kit@0.30.4 tsx@4.19.2 typescript@5.7.3
+
+
+
+
+https://app.eraser.io/workspace/s8XKlUujS1ZhbirZlkfr
