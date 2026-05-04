@@ -1,6 +1,6 @@
 import { Show, SignInButton, useAuth, UserButton } from "@clerk/react";
-// import { useQuery } from "@tanstack/react-query";
-// import { apiFetch } from "../lib/api";
+import { useQuery } from "@tanstack/react-query";
+import { apiFetch } from "../lib/api";
 import { Link } from "react-router";
 
 import {
@@ -11,20 +11,20 @@ import {
   ShoppingCartIcon,
   StoreIcon,
 } from "lucide-react";
-// import { useCart } from "../store/cart";
+import { useCart } from "../store/cart";
 
 const Navbar = () => {
-//   const { getToken, isSignedIn } = useAuth();
+  const { getToken, isSignedIn } = useAuth();
 
-//   const { data: meData } = useQuery({
-//     queryKey: ["me"],
-//     queryFn: () => apiFetch("/api/me", { getToken }),
-//     enabled: isSignedIn,
-//   });
+  const { data: meData } = useQuery({
+    queryKey: ["me"],
+    queryFn: () => apiFetch("/api/me", { getToken }),
+    enabled: isSignedIn,
+  });
 
-//   const role = meData?.user?.role;
+  const role = meData?.user?.role;
 
-//   const cartCount = useCart((s) => s.items.reduce((n, line) => n + line.quantity, 0));
+  const cartCount = useCart((s) => s.items.reduce((n, line) => n + line.quantity, 0));
 
   return (
     <header className="sticky top-0 z-50 border-b border-base-300 bg-base-100/95 shadow-sm backdrop-blur-md">
@@ -53,24 +53,24 @@ const Navbar = () => {
               <span className="hidden sm:inline">Orders</span>
             </Link>
 
-            {/* {role === "admin" ? (
+            {role === "admin" ? (
               <Link to="/admin" className="btn btn-ghost gap-2 font-medium text-secondary">
                 <SettingsIcon className="size-6" aria-hidden />
                 <span className="hidden sm:inline">Admin</span>
               </Link>
-            ) : null} */}
+            ) : null}
           </Show>
 
           <Link
             to="/cart"
             className="btn btn-ghost gap-2 font-medium indicator"
-            // aria-label={cartCount > 0 ? `Cart, ${cartCount} items` : "Cart"}
+            aria-label={cartCount > 0 ? `Cart, ${cartCount} items` : "Cart"}
           >
-            {/* {cartCount > 0 ? (
+            {cartCount > 0 ? (
               <span className="indicator-item badge badge-sm badge-primary min-w-2 px-1.5 font-sans text-xs tabular-nums">
                 {cartCount > 99 ? "99+" : cartCount}
               </span>
-            ) : null} */}
+            ) : null}
             <ShoppingCartIcon className="size-6 opacity-90" aria-hidden />
             <span className="hidden sm:inline">Cart</span>
           </Link>
@@ -89,11 +89,11 @@ const Navbar = () => {
               <UserButton
                 appearance={{ elements: { avatarBox: "h-10 w-10 ring-2 ring-base-300" } }}
               />
-              {/* {role === "support" || role === "admin" ? (
+              {role === "support" || role === "admin" ? (
                 <span className="badge badge-primary badge-sm hidden capitalize md:inline-flex">
                   {role}
                 </span>
-              ) : null} */}
+              ) : null}
             </div>
           </Show>
         </nav>
