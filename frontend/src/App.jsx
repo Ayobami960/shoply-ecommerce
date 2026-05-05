@@ -17,9 +17,12 @@ function App() {
     <Routes>
       <Route path='/' element={<HomePage/>}/>
       <Route path='/cart' element={<CartPage/>}/>
-      <Route path='/checkout/return' element={<CheckoutReturnPage/>}/>
-      <Route path='/orders' element={isSignedIn ? <OrdersPage/> : <Navigate to={"/"} replace/>}
-      />
+      <Route
+          path="/orders"
+          element={isSignedIn ? <OrdersPage /> : <Navigate to={"/"} replace />}
+        />
+        <Route path="/checkout/return" element={<CheckoutReturnPage />} />
+
     </Routes>
     </Layout>
   )

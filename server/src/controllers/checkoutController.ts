@@ -4,7 +4,7 @@ import z from "zod";
 import { getAuth } from "@clerk/express";
 import { getLocalUser } from "../lib/users";
 import { db } from "../db";
-import { CheckoutSessionLine, checkoutSessions, orders, products } from "../db/schema";
+import { CheckoutSessionLine, checkoutSessions, products } from "../db/schema";
 import { and, eq, inArray } from "drizzle-orm";
 import { polarCreateCheckout } from "../lib/polar";
 
@@ -30,7 +30,6 @@ export async function createCheckout(req: Request, res: Response, next: NextFunc
       return;
     }
 
-    // Then i check if the cart is valid or not
     const parsed = cartSchema.safeParse(req.body);
     if (!parsed.success) {
       res.status(400).json({ error: "Invalid cart", details: parsed.error.flatten() });
@@ -120,56 +119,6 @@ export async function createCheckout(req: Request, res: Response, next: NextFunc
       .where(eq(checkoutSessions.id, session.id));
 
     res.json({ checkoutUrl: checkout.url });
-  } catch (e) {
-    next(e);
-  }
-}
-
-export async function verifyCheckout(req: Request, res: Response, next: NextFunction) {
-  try {
-    const { userId, isAuthenticated } = getAuth(req);
-    if (!isAuthenticated || !userId) {
-      res.status(401).json({ error: "Unauthorized" });
-      return;
-    }
-
-    const checkoutId = req.params.id as string;
-    if (!checkoutId) {
-      res.status(400).json({ error: "Missing checkout ID" });
-      return;
-    }
-
-    const localUser = await getLocalUser(userId);
-    if (!localUser) {
-      res.status(503).json({ error: "Account not synced yet" });
-      return;
-    }
-
-    // Find if there's an order associated with this checkout
-    const orderList = await db
-      .select()
-      .from(orders)
-      .where(
-        and(
-          eq(orders.polarCheckoutId, checkoutId),
-          eq(orders.userId, localUser.id)
-        )
-      )
-      .limit(1);
-
-    if (!orderList || orderList.length === 0) {
-      // Order doesn't exist yet, might still be processing
-      res.status(404).json({ error: "Order not found", status: "pending" });
-      return;
-    }
-
-    const order = orderList[0];
-    res.json({
-      success: true,
-      status: order.status,
-      orderId: order.id,
-      totalCents: order.totalCents,
-    });
   } catch (e) {
     next(e);
   }

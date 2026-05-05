@@ -37,7 +37,7 @@ app.post("/webhooks/polar", rawJson, (req, res) => {
 });
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({ origin: true, credentials: true }));
 
 // app.use(cors({ origin: true, credentials: true }));
 app.use(clerkMiddleware());
