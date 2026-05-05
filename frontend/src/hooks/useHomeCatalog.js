@@ -2,7 +2,7 @@ import { useSearchParams } from "react-router";
 import { apiFetch } from "../lib/api.js";
 import { useQuery } from "@tanstack/react-query";
 
-export function useHomeCatalog() {
+export default function useHomeCatalog() {
   const [searchParams, setSearchParams] = useSearchParams();
   const categoryFilter = searchParams.get("category")?.trim() ?? "";
 
