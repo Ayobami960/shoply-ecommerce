@@ -11,7 +11,8 @@ import {
   StreamTheme,
   SpeakerLayout,
 } from "@stream-io/video-react-sdk";
-import "stream-chat-react/dist/css/v2/index.css";
+
+import "@stream-io/video-react-sdk/dist/css/styles.css";
 import useOrderVideoPage from "../hooks/useOrderVideoPage";
 
 function OrderVideoPage() {
