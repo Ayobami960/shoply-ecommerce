@@ -2,19 +2,23 @@ import { Show, SignInButton, useAuth, UserButton } from "@clerk/react";
 import { useQuery } from "@tanstack/react-query";
 import { apiFetch } from "../lib/api";
 import { Link } from "react-router";
+import { useState } from "react";
 
 import {
   LogInIcon,
+  MenuIcon,
   PackageIcon,
   SettingsIcon,
   ShoppingBagIcon,
   ShoppingCartIcon,
   StoreIcon,
+  XIcon,
 } from "lucide-react";
 import { useCart } from "../store/cart";
 
 const Navbar = () => {
   const { getToken, isSignedIn } = useAuth();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const { data: meData } = useQuery({
     queryKey: ["me"],
@@ -23,16 +27,20 @@ const Navbar = () => {
   });
 
   const role = meData?.user?.role;
-
   const cartCount = useCart((s) => s.items.reduce((n, line) => n + line.quantity, 0));
+
+  const closeMenu = () => setMenuOpen(false);
 
   return (
     <header className="sticky top-0 z-50 border-b border-base-300 bg-base-100/95 shadow-sm backdrop-blur-md">
       <div className="navbar mx-auto min-h-14 max-w-7xl px-4 py-2.5 md:px-6 md:py-3">
+        
+        {/* Logo */}
         <div className="flex-1">
           <Link
             to="/"
             className="btn btn-ghost gap-2 px-2 font-mono text-lg font-semibold uppercase tracking-wide md:text-xl"
+            onClick={closeMenu}
           >
             <span className="flex size-10 items-center justify-center rounded-lg bg-primary/15 p-1 text-primary">
               <StoreIcon className="size-8" aria-hidden />
@@ -41,24 +49,25 @@ const Navbar = () => {
           </Link>
         </div>
 
-        <nav className="flex items-center gap-1 md:gap-1.5">
+        {/* Desktop Nav */}
+        <nav className="hidden md:flex items-center gap-1 md:gap-1.5">
           <Link to="/" className="btn btn-ghost gap-2 font-medium">
             <ShoppingBagIcon className="size-6 opacity-90" aria-hidden />
-            <span className="hidden sm:inline">Shop</span>
+            <span>Shop</span>
           </Link>
 
           <Show when={"signed-in"}>
             <Link to="/orders" className="btn btn-ghost gap-2 font-medium">
               <PackageIcon className="size-6 opacity-90" aria-hidden />
-              <span className="hidden sm:inline">Orders</span>
+              <span>Orders</span>
             </Link>
 
-            {role === "admin" ? (
+            {role === "admin" && (
               <Link to="/admin" className="btn btn-ghost gap-2 font-medium text-secondary">
                 <SettingsIcon className="size-6" aria-hidden />
-                <span className="hidden sm:inline">Admin</span>
+                <span>Admin</span>
               </Link>
-            ) : null}
+            )}
           </Show>
 
           <Link
@@ -66,13 +75,13 @@ const Navbar = () => {
             className="btn btn-ghost gap-2 font-medium indicator"
             aria-label={cartCount > 0 ? `Cart, ${cartCount} items` : "Cart"}
           >
-            {cartCount > 0 ? (
+            {cartCount > 0 && (
               <span className="indicator-item badge badge-sm badge-primary min-w-2 px-1.5 font-sans text-xs tabular-nums">
                 {cartCount > 99 ? "99+" : cartCount}
               </span>
-            ) : null}
+            )}
             <ShoppingCartIcon className="size-6 opacity-90" aria-hidden />
-            <span className="hidden sm:inline">Cart</span>
+            <span>Cart</span>
           </Link>
 
           <Show when={"signed-out"}>
@@ -89,15 +98,103 @@ const Navbar = () => {
               <UserButton
                 appearance={{ elements: { avatarBox: "h-10 w-10 ring-2 ring-base-300" } }}
               />
-              {role === "support" || role === "admin" ? (
-                <span className="badge badge-primary badge-sm hidden capitalize md:inline-flex">
+              {(role === "support" || role === "admin") && (
+                <span className="badge badge-primary badge-sm capitalize">
                   {role}
                 </span>
-              ) : null}
+              )}
             </div>
           </Show>
         </nav>
+
+        {/* Mobile Right Side - Cart + Avatar + Hamburger */}
+        <div className="flex md:hidden items-center gap-2">
+          {/* Cart icon always visible on mobile */}
+          <Link
+            to="/cart"
+            className="btn btn-ghost btn-sm indicator"
+            aria-label={cartCount > 0 ? `Cart, ${cartCount} items` : "Cart"}
+            onClick={closeMenu}
+          >
+            {cartCount > 0 && (
+              <span className="indicator-item badge badge-xs badge-primary min-w-2 px-1 font-sans text-xs tabular-nums">
+                {cartCount > 99 ? "99+" : cartCount}
+              </span>
+            )}
+            <ShoppingCartIcon className="size-5 opacity-90" aria-hidden />
+          </Link>
+
+          {/* User avatar on mobile */}
+          <Show when={"signed-in"}>
+            <UserButton
+              appearance={{ elements: { avatarBox: "h-8 w-8 ring-2 ring-base-300" } }}
+            />
+          </Show>
+
+          {/* Hamburger button */}
+          <button
+            type="button"
+            className="btn btn-ghost btn-sm"
+            onClick={() => setMenuOpen((prev) => !prev)}
+            aria-label="Toggle menu"
+          >
+            {menuOpen ? <XIcon className="size-5" /> : <MenuIcon className="size-5" />}
+          </button>
+        </div>
       </div>
+
+      {/* Mobile Dropdown Menu */}
+      {menuOpen && (
+        <div className="md:hidden border-t border-base-300 bg-base-100 shadow-md">
+          <nav className="flex flex-col px-4 py-3 gap-1">
+            <Link
+              to="/"
+              className="btn btn-ghost justify-start gap-3 font-medium"
+              onClick={closeMenu}
+            >
+              <ShoppingBagIcon className="size-5 opacity-90" aria-hidden />
+              Shop
+            </Link>
+
+            <Show when={"signed-in"}>
+              <Link
+                to="/orders"
+                className="btn btn-ghost justify-start gap-3 font-medium"
+                onClick={closeMenu}
+              >
+                <PackageIcon className="size-5 opacity-90" aria-hidden />
+                Orders
+              </Link>
+
+              {role === "admin" && (
+                <Link
+                  to="/admin"
+                  className="btn btn-ghost justify-start gap-3 font-medium text-secondary"
+                  onClick={closeMenu}
+                >
+                  <SettingsIcon className="size-5" aria-hidden />
+                  Admin
+                </Link>
+              )}
+            </Show>
+
+            <Show when={"signed-out"}>
+              <div className="pt-1">
+                <SignInButton mode="modal">
+                  <button
+                    type="button"
+                    className="btn btn-primary btn-sm w-full gap-2"
+                    onClick={closeMenu}
+                  >
+                    <LogInIcon className="size-4" aria-hidden />
+                    Sign in
+                  </button>
+                </SignInButton>
+              </div>
+            </Show>
+          </nav>
+        </div>
+      )}
     </header>
   );
 };
